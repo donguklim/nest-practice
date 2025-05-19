@@ -3,9 +3,10 @@ import { AppModule } from '@app/app.module';
 import * as SwaggerUi from 'swagger-ui-express';
 import * as YAML from 'yamljs';
 import { join } from 'path';
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bodyParser: false });
   const swaggerDocument = YAML.load(
     join(__dirname, '..', 'swagger.yaml'),
   );

@@ -1,8 +1,8 @@
 services:
   auth-mongo:
     image: mongo:6
-    ports:
-      - "27017:27017"
+    # ports:
+    #   - "27017:27017"
     environment:
       MONGO_INITDB_DATABASE: auth
     volumes:
@@ -17,14 +17,16 @@ services:
     environment:
       MONGO_URI: mongodb://auth-mongo:27017/auth
       JWT_SECRET_KEY: secret_key
+      GATEWAY_SECRET: gateway_secret
 
   gateway:
     build: ./gateway
     ports:
       - "3000:3000"
     environment:
-      AUTH_URL: http://auth-app:3001
+      AUTH_URL: http://auth-app:3000
       JWT_SECRET_KEY: secret_key
+      GATEWAY_SECRET: gateway_secret
     depends_on:
       - auth-app
 

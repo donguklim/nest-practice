@@ -5,7 +5,7 @@ import {
   Length,
   IsOptional,
 } from 'class-validator';
-import { UserRole } from '@app/auth/constants';
+import { Role } from '@app/auth/role.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UserUpdateDto {
@@ -15,7 +15,7 @@ export class UserUpdateDto {
   @ApiProperty()
   username: string;
   @IsOptional()
-  @IsEnum(UserRole)
+  @IsEnum(Role)
   @ApiProperty({
     description: 'role value: USER = 4, OPERATOR = 3, AUDITOR = 2, ADMIN = 1',
     example: 4,

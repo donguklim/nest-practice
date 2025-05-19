@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { MongoServerError } from 'mongodb';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UserRole } from '@app/auth/constants';
+import { Role } from '@app/auth/role.enum';
 import { LoginDto } from '@app/auth/dto/login.dto';
 import { UserUpdateDto } from '@app/auth/dto/user.update';
 import { User } from '@app/auth/user.interface';
@@ -45,7 +45,7 @@ export class AuthService {
     };
   }
 
-  async registerUser(username: string, password: string, role: UserRole) {
+  async registerUser(username: string, password: string, role: Role) {
     const hash = await bcrypt.hash(password, 10);
     const user = new this.userModel({ username, password: hash, role: role });
     try {

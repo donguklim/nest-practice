@@ -10,7 +10,7 @@ import { AppService } from '@app/app.service';
 import { AuthService } from '@app/auth/service';
 import { LoginDto } from '@app/auth/dto/login.dto';
 import { UserUpdateDto } from '@app/auth/dto/user.update';
-import { UserRole } from '@app/auth/constants';
+import { Role } from '@app/auth/role.enum';
 import { ApiBody, ApiOperation } from '@nestjs/swagger';
 import { UserRegistrationDto } from '@app/auth/dto/user.registration.dto';
 import {
@@ -59,7 +59,7 @@ export class AppController {
       await this.authService.registerUser(
         registrationDto.username,
         registrationDto.password,
-        UserRole.USER,
+        Role.USER,
       );
     } catch (err) {
       if (err instanceof DuplicateUsernameError) {

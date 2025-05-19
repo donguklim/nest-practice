@@ -15,10 +15,10 @@ import { UserRegistrationDto } from '@app/auth/dto/user.registration.dto';
 import {
   DuplicateUsernameError,
   DeceasedUserError,
-  NonExistingUserError,
+  InvalidLogin,
 } from '@app/auth/errors';
 
-@Controller()
+@Controller('auth')
 export class AppController {
   constructor(
     private readonly appService: AppService,
@@ -34,10 +34,7 @@ export class AppController {
     try {
       return await this.authService.login(loginDto);
     } catch (err) {
-      if (
-        err instanceof NonExistingUserError ||
-        err instanceof DeceasedUserError
-      ) {
+      if (err instanceof InvalidLogin || err instanceof DeceasedUserError) {
         throw new UnauthorizedException(err.message);
       } else {
         throw err;
@@ -51,7 +48,7 @@ export class AppController {
   @ApiBody({
     type: UserRegistrationDto,
   })
-  @Post('user/signup')
+  @Post('signup')
   async signup(@Body() registrationDto: UserRegistrationDto) {
     if (registrationDto.password != registrationDto.re_password) {
       throw new BadRequestException('passwords do not match');
@@ -70,7 +67,7 @@ export class AppController {
       }
     }
     return {
-      message: `User ${registrationDto.username} is created`
+      message: `User ${registrationDto.username} is created`,
     };
   }
 }

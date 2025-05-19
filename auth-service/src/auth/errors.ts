@@ -4,9 +4,9 @@ export class DuplicateUsernameError extends Error {
   }
 }
 
-export class NonExistingUserError extends Error {
+export class InvalidLogin extends Error {
   constructor(username: string) {
-    super(`user name ${username} does not exists!`);
+    super(`user name ${username} or password is wrong!`);
   }
 }
 

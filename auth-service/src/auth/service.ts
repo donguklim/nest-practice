@@ -10,7 +10,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import {
   DuplicateUsernameError,
   DeceasedUserError,
-  NonExistingUserError,
+  InvalidLogin,
 } from '@app/auth/errors';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const user = await this.validateUser(loginDto.username, loginDto.password);
-    if (!user) throw new NonExistingUserError(loginDto.username);
+    if (!user) throw new InvalidLogin(loginDto.username);
     if (!user.isActive) throw new DeceasedUserError(user.username);
     return {
       access_token: this.jwtService.sign({

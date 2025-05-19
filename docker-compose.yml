@@ -1,57 +1,22 @@
 services:
-  auth-configsvr:
-    image: mongo:6.0
-    command: ["mongod", "--configsvr", "--replSet", "configReplSet", "--port", "27017"]
-    ports: [ "27017:27017" ]
+  auth-mongo:
+    image: mongo:6
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: testdb
     volumes:
-      - auth_config_db:/data/db
-
-  auth-shard1:
-    image: mongo:6.0
-    command: ["mongod", "--shardsvr", "--replSet", "shardReplSet1", "--port", "27018"]
-    ports: [ "27018:27018" ]
-    volumes:
-      - auth_shard1:/data/db
-
-  auth-shard2:
-    image: mongo:6.0
-    command: ["mongod", "--shardsvr", "--replSet", "shardReplSet2", "--port", "27019"]
-    ports: [ "27019:27019" ]
-    volumes:
-      - auth_shard2:/data/db
-
-  auth-mongos:
-    image: mongo:6.0
-    depends_on: [auth-configsvr, auth-shard1, auth-shard2]
-    ports: [ "27020:27017" ]
-    command: >
-      bash -c "
-        sleep 10 &&
-        mongosh --eval '
-          rs.initiate({_id: \"configReplSet\", configsvr: true, members: [{ _id: 0, host: \"auth-configsvr:27017\" }]});
-          rs.initiate({_id: \"shardReplSet1\", members: [{ _id: 0, host: \"auth-shard1:27018\" }]});
-          rs.initiate({_id: \"shardReplSet2\", members: [{ _id: 0, host: \"auth-shard2:27019\" }]});
-        ' &&
-        sleep 10 &&
-        mongos --configdb configReplSet/configsvr:27017 --bind_ip_all
-      "
-
-  shard-init:
-    image: mongo:6.0
-    depends_on: [auth-mongos]
-    volumes:
-      - ./init-shard.js:/init-shard.js
-    entrypoint: ["bash", "-c", "sleep 15 && mongosh mongos:27017 /init-shard.js"]
+      - auth-data:/data/db
 
   auth-app:
     build: ./auth-service
-    depends_on: [auth-mongos, shard-init]
+    depends_on:
+      - auth-mongo
     ports:
       - "3000:3000"
     environment:
-      MONGO_URI: mongodb://auth-mongos:27017/auth
+      MONGO_URI: mongodb://auth-mongo:27017/auth
 
 volumes:
-  auth_config_db:
-  auth_shard1:
-  auth_shard2:
+  auth-data:

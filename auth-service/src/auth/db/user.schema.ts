@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import { UserRole } from 'auth/constants';
+import { UserRole } from '@app/auth/constants';
 
 export const UserSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },

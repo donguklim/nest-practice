@@ -1,5 +1,6 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { Model } from 'mongoose';
+import { MongoServerError } from 'mongodb';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from '@app/auth/constants';
@@ -40,6 +41,16 @@ export class AuthService {
   async registerUser(username: string, password: string, role: UserRole) {
     const hash = await bcrypt.hash(password, 10);
     const user = new this.userModel({ username, password: hash, role: role });
-    return user.save();
+    try {
+      return await user.save();
+    } catch (err) {
+      if (err instanceof MongoServerError && err.code === 11000) {
+        throw new ConflictException(
+          `user with name ${username} already exist!`,
+        );
+      } else {
+        throw err;
+      }
+    }
   }
 }

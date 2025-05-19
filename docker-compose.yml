@@ -1,11 +1,10 @@
 services:
   auth-mongo:
     image: mongo:6
-    container_name: mongo
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_DATABASE: testdb
+      MONGO_INITDB_DATABASE: auth
     volumes:
       - auth-data:/data/db
 

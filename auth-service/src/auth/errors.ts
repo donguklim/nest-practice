@@ -10,9 +10,14 @@ export class InvalidLogin extends Error {
   }
 }
 
-
 export class DeceasedUserError extends Error {
   constructor(username: string) {
     super(`user ${username} is no longer active!`);
+  }
+}
+
+export class NonExistingUserError extends Error {
+  constructor(username: string) {
+    super(`user name ${username} does not exists!`);
   }
 }

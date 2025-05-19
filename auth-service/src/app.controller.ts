@@ -4,11 +4,13 @@ import {
   ConflictException,
   Controller,
   Get,
-  Post, UnauthorizedException,
+  Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AppService } from '@app/app.service';
 import { AuthService } from '@app/auth/service';
 import { LoginDto } from '@app/auth/dto/login.dto';
+import { UserUpdateDto } from '@app/auth/dto/user.update';
 import { UserRole } from '@app/auth/constants';
 import { ApiBody, ApiOperation } from '@nestjs/swagger';
 import { UserRegistrationDto } from '@app/auth/dto/user.registration.dto';
@@ -16,6 +18,7 @@ import {
   DuplicateUsernameError,
   DeceasedUserError,
   InvalidLogin,
+  NonExistingUserError,
 } from '@app/auth/errors';
 
 @Controller('auth')
@@ -29,6 +32,10 @@ export class AppController {
   async getHello() {
     return this.appService.getHello();
   }
+  @ApiOperation({
+    summary: 'login',
+    description: 'login api',
+  })
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     try {
@@ -68,6 +75,28 @@ export class AppController {
     }
     return {
       message: `User ${registrationDto.username} is created`,
+    };
+  }
+  @ApiOperation({
+    summary: 'user update api',
+    description: 'User update api only can be used by admin',
+  })
+  @ApiBody({
+    type: UserUpdateDto,
+  })
+  @Post('update')
+  async update(@Body() userUpdateDto: UserUpdateDto) {
+    try {
+      await this.authService.updateUser(userUpdateDto);
+    } catch (err) {
+      if (err instanceof NonExistingUserError) {
+        throw new ConflictException(err.message);
+      } else {
+        throw err;
+      }
+    }
+    return {
+      message: `User ${userUpdateDto.username} is updated`,
     };
   }
 }

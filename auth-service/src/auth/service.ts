@@ -5,12 +5,14 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from '@app/auth/constants';
 import { LoginDto } from '@app/auth/dto/login.dto';
+import { UserUpdateDto } from '@app/auth/dto/user.update';
 import { User } from '@app/auth/user.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   DuplicateUsernameError,
   DeceasedUserError,
   InvalidLogin,
+  NonExistingUserError,
 } from '@app/auth/errors';
 
 @Injectable()
@@ -55,5 +57,20 @@ export class AuthService {
         throw err;
       }
     }
+  }
+
+  async updateUser(updateDto: UserUpdateDto){
+    const { username: username, ...updateFields } = updateDto;
+    const updatedUser = await this.userModel.findOneAndUpdate(
+      { username },
+      { $set: updateFields },
+      { new: true },
+    );
+
+    if (!updatedUser) {
+      throw new NonExistingUserError(`Username ${username} not found`);
+    }
+
+    return true;
   }
 }

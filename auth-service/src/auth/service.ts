@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { MongoServerError } from 'mongodb';
 import { JwtService } from '@nestjs/jwt';
@@ -7,6 +7,11 @@ import { UserRole } from '@app/auth/constants';
 import { LoginDto } from '@app/auth/dto/login.dto';
 import { User } from '@app/auth/user.interface';
 import { InjectModel } from '@nestjs/mongoose';
+import {
+  DuplicateUsernameError,
+  DeceasedUserError,
+  NonExistingUserError,
+} from '@app/auth/errors';
 
 @Injectable()
 export class AuthService {
@@ -27,8 +32,8 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const user = await this.validateUser(loginDto.username, loginDto.password);
-    if (!user) throw new UnauthorizedException('Invalid credentials');
-    if (!user.isActive) throw new UnauthorizedException('Suspended user');
+    if (!user) throw new NonExistingUserError(loginDto.username);
+    if (!user.isActive) throw new DeceasedUserError(user.username);
     return {
       access_token: this.jwtService.sign({
         sub: user._id,
@@ -45,9 +50,7 @@ export class AuthService {
       return await user.save();
     } catch (err) {
       if (err instanceof MongoServerError && err.code === 11000) {
-        throw new ConflictException(
-          `user with name ${username} already exist!`,
-        );
+        throw new DuplicateUsernameError(username);
       } else {
         throw err;
       }

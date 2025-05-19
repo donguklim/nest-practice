@@ -1,10 +1,22 @@
-import { BadRequestException, Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  ConflictException,
+  Controller,
+  Get,
+  Post, UnauthorizedException,
+} from '@nestjs/common';
 import { AppService } from '@app/app.service';
 import { AuthService } from '@app/auth/service';
 import { LoginDto } from '@app/auth/dto/login.dto';
 import { UserRole } from '@app/auth/constants';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation } from '@nestjs/swagger';
 import { UserRegistrationDto } from '@app/auth/dto/user.registration.dto';
+import {
+  DuplicateUsernameError,
+  DeceasedUserError,
+  NonExistingUserError,
+} from '@app/auth/errors';
 
 @Controller()
 export class AppController {
@@ -19,7 +31,18 @@ export class AppController {
   }
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+    try {
+      return await this.authService.login(loginDto);
+    } catch (err) {
+      if (
+        err instanceof NonExistingUserError ||
+        err instanceof DeceasedUserError
+      ) {
+        throw new UnauthorizedException(err.message);
+      } else {
+        throw err;
+      }
+    }
   }
   @ApiOperation({
     summary: 'signup',
@@ -28,19 +51,26 @@ export class AppController {
   @ApiBody({
     type: UserRegistrationDto,
   })
-  @Post('signup')
+  @Post('user/signup')
   async signup(@Body() registrationDto: UserRegistrationDto) {
     if (registrationDto.password != registrationDto.re_password) {
       throw new BadRequestException('passwords do not match');
     }
-    const user = await this.authService.registerUser(
-      registrationDto.username,
-      registrationDto.password,
-      UserRole.USER,
-    );
-
+    try {
+      await this.authService.registerUser(
+        registrationDto.username,
+        registrationDto.password,
+        UserRole.USER,
+      );
+    } catch (err) {
+      if (err instanceof DuplicateUsernameError) {
+        throw new ConflictException(err.message);
+      } else {
+        throw err;
+      }
+    }
     return {
-      username: user.username,
+      message: `User ${registrationDto.username} is created`
     };
   }
 }

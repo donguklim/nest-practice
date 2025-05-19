@@ -10,7 +10,7 @@ export class AppController {
     private readonly authService: AuthService,
   ) {}
 
-  @Get()
+  @Get('hello')
   async getHello() {
     return this.appService.getHello();
   }

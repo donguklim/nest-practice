@@ -18,4 +18,8 @@ export class AppController {
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
+  @Post('register')
+  async register(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto);
+  }
 }

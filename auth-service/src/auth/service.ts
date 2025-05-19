@@ -1,15 +1,16 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from '@app/auth/constants';
 import { LoginDto } from '@app/auth/dto/login.dto';
 import { User } from '@app/auth/user.interface';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject('USER_MODEL')
+    @InjectModel('User')
     private userModel: Model<User>,
     private jwtService: JwtService,
   ) {}

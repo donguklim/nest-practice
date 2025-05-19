@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   auth-configsvr:
     image: mongo:6.0
@@ -24,7 +22,7 @@ services:
 
   auth-mongos:
     image: mongo:6.0
-    depends_on: [configsvr, shard1, shard2]
+    depends_on: [auth-configsvr, auth-shard1, auth-shard2]
     ports: [ "27020:27017" ]
     command: >
       bash -c "
@@ -47,7 +45,7 @@ services:
 
   auth-app:
     build: ./auth-service
-    depends_on: [mongos, shard-init]
+    depends_on: [auth-mongos, shard-init]
     ports:
       - "3000:3000"
     environment:

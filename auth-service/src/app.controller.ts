@@ -11,7 +11,7 @@ import { AuthService } from '@app/auth/service';
 import { LoginDto } from '@app/auth/dto/login.dto';
 import { UserUpdateDto } from '@app/auth/dto/user.update';
 import { Role } from '@app/auth/role.enum';
-import { ApiBody, ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserRegistrationDto } from '@app/auth/dto/user.registration.dto';
 import {
   DuplicateUsernameError,
@@ -20,6 +20,7 @@ import {
   NonExistingUserError,
 } from '@app/auth/errors';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AppController {
   constructor(

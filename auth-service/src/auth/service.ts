@@ -27,6 +27,7 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const user = await this.validateUser(loginDto.username, loginDto.password);
     if (!user) throw new UnauthorizedException('Invalid credentials');
+    if (!user.isActive) throw new UnauthorizedException('Suspended user');
     return {
       access_token: this.jwtService.sign({
         sub: user._id,

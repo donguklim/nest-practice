@@ -23,10 +23,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      SERVICE_URL: http://service:3001
+      AUTH_URL: http://auth-app:3001
       JWT_SECRET_KEY: secret_key
     depends_on:
-      - service
+      - auth-app
 
 volumes:
   auth-data:

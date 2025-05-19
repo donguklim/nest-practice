@@ -3,7 +3,6 @@ import {
   Body,
   ConflictException,
   Controller,
-  Get,
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -28,10 +27,6 @@ export class AppController {
     private readonly authService: AuthService,
   ) {}
 
-  @Get('hello')
-  async getHello() {
-    return this.appService.getHello();
-  }
   @ApiOperation({
     summary: 'login',
     description: 'login api',
@@ -81,10 +76,7 @@ export class AppController {
     summary: 'user update api',
     description: 'User update api only can be used by admin',
   })
-  @ApiBody({
-    type: UserUpdateDto,
-  })
-  @Post('update')
+  @Post('admin/update')
   async update(@Body() userUpdateDto: UserUpdateDto) {
     try {
       await this.authService.updateUser(userUpdateDto);

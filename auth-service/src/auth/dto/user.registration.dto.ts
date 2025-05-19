@@ -6,7 +6,7 @@ export class UserRegistrationDto {
   @Length(4, 32)
   @ApiProperty({
     description: 'username',
-    example: 'securePassword123',
+    example: 'newbieuser',
     minLength: 6,
     maxLength: 32,
   })

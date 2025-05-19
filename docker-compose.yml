@@ -13,9 +13,20 @@ services:
     depends_on:
       - auth-mongo
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       MONGO_URI: mongodb://auth-mongo:27017/auth
+      JWT_SECRET_KEY: secret_key
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "3000:3000"
+    environment:
+      SERVICE_URL: http://service:3001
+      JWT_SECRET_KEY: secret_key
+    depends_on:
+      - service
 
 volumes:
   auth-data:

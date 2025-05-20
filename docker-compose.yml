@@ -32,8 +32,8 @@ services:
     build: ./event-service
     depends_on:
       - event-mongo
-    ports:
-      - "3001:3000"
+    # ports:
+    #   - "3001:3000"
     environment:
       MONGO_URI: mongodb://event-mongo:27017/event
       JWT_SECRET_KEY: secret_key
@@ -45,6 +45,7 @@ services:
       - "3000:3000"
     environment:
       AUTH_URL: http://auth-app:3000
+      EVENT_URL: http://event-app:3000
       JWT_SECRET_KEY: secret_key
       GATEWAY_SECRET: gateway_secret
     depends_on:

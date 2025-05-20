@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Req, Res, UseGuards, HttpStatus, Options } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '@app/auth/jwt-auth.guard';
 import { RolesGuard } from '@app/auth/roles.guard';
 import { Roles } from '@app/auth/roles.decorator';
@@ -43,6 +51,29 @@ export class AppController {
 
   @Post('auth/*')
   async anonymousAuth(@Req() req: Request, @Res() res: Response) {
+    const targetUrl = `${process.env.AUTH_URL}${req.originalUrl}`;
+    return this.forwardRequest(req, res, targetUrl);
+  }
+
+  @Get('event/*')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  async eventGet(@Req() req: Request, @Res() res: Response) {
+    const targetUrl = `${process.env.AUTH_URL}${req.originalUrl}`;
+    return this.forwardRequest(req, res, targetUrl);
+  }
+
+  @Post('event/*')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  async eventPost(@Req() req: Request, @Res() res: Response) {
+    const targetUrl = `${process.env.AUTH_URL}${req.originalUrl}`;
+    return this.forwardRequest(req, res, targetUrl);
+  }
+  @Patch('event/*')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  async eventPatch(@Req() req: Request, @Res() res: Response) {
     const targetUrl = `${process.env.AUTH_URL}${req.originalUrl}`;
     return this.forwardRequest(req, res, targetUrl);
   }

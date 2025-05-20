@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsString,
   IsNotEmpty,
@@ -20,11 +21,21 @@ export class EventConditionDto {
   @IsNotEmpty()
   targetCode: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '2025-06-01T12:00:00.000Z',
+    type: String,
+    format: 'date-time',
+  })
+  @Type(() => Date)
   @IsDate()
   fromDate: Date;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '2025-06-01T12:00:00.000Z',
+    type: String,
+    format: 'date-time',
+  })
+  @Type(() => Date)
   @IsDate()
   toDate: Date;
 

@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-// import * as YAML from 'yaml';
-// import { writeFileSync } from 'fs';
+import * as YAML from 'yaml';
+import { writeFileSync } from 'fs';
 
 export function setupSwagger(app: INestApplication): void {
   const options = new DocumentBuilder()
@@ -14,6 +14,6 @@ export function setupSwagger(app: INestApplication): void {
   SwaggerModule.setup('swagger', app, document);
 
   // ✅ Write YAML file
-  // const yamlString = YAML.stringify(document);
-  // writeFileSync('./swagger.yaml', yamlString);
+  const yamlString = YAML.stringify(document);
+  writeFileSync('./swagger.yaml', yamlString);
 }

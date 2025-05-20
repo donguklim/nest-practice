@@ -15,7 +15,7 @@ import { EventConditionDto } from '@app/event/dto/condition.dto';
 
 @ApiTags('Events')
 @Controller('events')
-export class PostController {
+export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @HttpPost()

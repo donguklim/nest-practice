@@ -77,25 +77,25 @@ export class EventService {
   }
 
   async resetConditions(id: string) {
-    return this.eventModel.findByIdAndUpdate(
-      id,
-      { conditions: [] },
+    return this.eventModel.findOneAndUpdate(
+      { _id: id, isEnabled: false },
+      { $set: { conditions: [] } },
       { new: true },
     );
   }
 
   async appendCondition(id: string, dto: EventConditionDto) {
-    return this.eventModel.findByIdAndUpdate(
-      id,
+    return this.eventModel.findOneAndUpdate(
+      { _id: id, isEnabled: false },
       { $push: { conditions: dto } },
       { new: true },
     );
   }
 
   async replaceComments(id: string, dto: UpdateEventConditionsDto) {
-    return this.eventModel.findByIdAndUpdate(
-      id,
-      { conditions: dto.conditions },
+    return this.eventModel.findOneAndUpdate(
+      { _id: id, isEnabled: false },
+      { $set: { conditions: dto.conditions } },
       { new: true },
     );
   }

@@ -20,6 +20,15 @@ services:
       GATEWAY_SECRET: gateway_secret
 
   event-mongo:
+    image: mongo:6
+    # ports:
+    #   - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: event
+    volumes:
+      - event-data:/data/db
+
+  event-app:
     build: ./event-service
     depends_on:
       - event-mongo
@@ -29,15 +38,6 @@ services:
       MONGO_URI: mongodb://event-mongo:27017/event
       JWT_SECRET_KEY: secret_key
       GATEWAY_SECRET: gateway_secret
-
-  event-app:
-    image: mongo:6
-    # ports:
-    #   - "27017:27017"
-    environment:
-      MONGO_INITDB_DATABASE: event
-    volumes:
-      - event-data:/data/db
 
   gateway:
     build: ./gateway

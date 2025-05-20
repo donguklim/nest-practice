@@ -9,5 +9,5 @@ export class UpdateEventConditionsDto {
   @ArrayNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => EventConditionDto)
-  comments: EventConditionDto[];
+  conditions: EventConditionDto[];
 }
